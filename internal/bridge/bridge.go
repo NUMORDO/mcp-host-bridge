@@ -191,7 +191,7 @@ func (g *Gateway) Server(name string, policy config.Server, d config.Definition)
 					return nil, rpcError(-32602, "resource not allowed")
 				}
 			case "resources/templates/list":
-				return &mcp.ListResourceTemplatesResult{ResourceTemplates: []*mcp.ResourceTemplate{}}, nil
+				return privateResult(&mcp.ListResourceTemplatesResult{ResourceTemplates: []*mcp.ResourceTemplate{}}), nil
 			default:
 				return nil, rpcError(-32601, "method not exposed")
 			}
@@ -233,7 +233,7 @@ func (g *Gateway) Server(name string, policy config.Server, d config.Definition)
 			if e != nil {
 				return nil, rpcError(-32000, "backend request failed; no automatic retry")
 			}
-			return result, nil
+			return privateResult(result), nil
 		}
 	})
 	return server
