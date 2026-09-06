@@ -39,17 +39,21 @@ type Limits struct {
 	BodyBytes       int64 `json:"body_bytes"`
 	OutputBytes     int64 `json:"output_bytes"`
 }
+
+const DescribeToolName = "bridge_describe_tool"
+
 type Server struct {
-	BackendScope string   `json:"backend_scope,omitempty"`
-	Stateless    bool     `json:"stateless,omitempty"`
-	RegistryName string   `json:"registry_name"`
-	Command      string   `json:"command"`
-	Args         []string `json:"args"`
-	Cwd          string   `json:"cwd"`
-	EnvKeys      []string `json:"env_keys"`
-	Tools        []string `json:"tools"`
-	Prompts      []string `json:"prompts"`
-	Resources    []string `json:"resources"`
+	DescriptionLimit int      `json:"description_limit,omitempty"`
+	BackendScope     string   `json:"backend_scope,omitempty"`
+	Stateless        bool     `json:"stateless,omitempty"`
+	RegistryName     string   `json:"registry_name"`
+	Command          string   `json:"command"`
+	Args             []string `json:"args"`
+	Cwd              string   `json:"cwd"`
+	EnvKeys          []string `json:"env_keys"`
+	Tools            []string `json:"tools"`
+	Prompts          []string `json:"prompts"`
+	Resources        []string `json:"resources"`
 }
 
 // Definition is resolved in memory on the owning host; it must never be logged.
@@ -154,6 +158,14 @@ func (c *Config) Validate() error {
 		return errors.New("configure between 1 and 64 servers")
 	}
 	for n, s := range c.Servers {
+		if s.DescriptionLimit != 0 && (s.DescriptionLimit < 64 || s.DescriptionLimit > 4096) {
+			return fmt.Errorf("server %s description_limit must be zero or 64..4096", n)
+		}
+		for _, tool := range s.Tools {
+			if s.DescriptionLimit > 0 && tool == DescribeToolName {
+				return fmt.Errorf("server %s uses the reserved metadata tool name", n)
+			}
+		}
 		if s.BackendScope != "" && s.BackendScope != "session" && s.BackendScope != "shared" {
 			return fmt.Errorf("server %s invalid backend_scope", n)
 		}

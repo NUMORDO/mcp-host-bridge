@@ -28,7 +28,7 @@ func TestBackendProcess(t *testing.T) {
 	mcp.AddTool(s, &mcp.Tool{Name: "pid"}, func(context.Context, *mcp.CallToolRequest, struct{}) (*mcp.CallToolResult, any, error) {
 		return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: fmt.Sprint(os.Getpid())}}}, nil, nil
 	})
-	mcp.AddTool(s, &mcp.Tool{Name: "counter"}, func(context.Context, *mcp.CallToolRequest, struct{}) (*mcp.CallToolResult, any, error) {
+	mcp.AddTool(s, &mcp.Tool{Name: "counter", Description: strings.Repeat("Detailed original counter guidance. ", 80)}, func(context.Context, *mcp.CallToolRequest, struct{}) (*mcp.CallToolResult, any, error) {
 		return &mcp.CallToolResult{Content: []mcp.Content{&mcp.TextContent{Text: fmt.Sprint(count.Add(1))}}}, nil, nil
 	})
 	mcp.AddTool(s, &mcp.Tool{Name: "hidden"}, func(context.Context, *mcp.CallToolRequest, struct{}) (*mcp.CallToolResult, any, error) {

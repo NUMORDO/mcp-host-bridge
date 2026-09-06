@@ -122,6 +122,9 @@ func (g *Gateway) Server(name string, policy config.Server, d config.Definition)
 	if policy.BackendScope == "shared" {
 		instructions = "Only explicitly configured host-local capabilities are exposed. This endpoint shares an operator-attested stateless backend within each authenticated principal."
 	}
+	if policy.DescriptionLimit > 0 {
+		instructions += " Tool descriptions may be shortened. Call bridge_describe_tool before using an unfamiliar tool to obtain its full original guidance."
+	}
 	caps := &mcp.ServerCapabilities{}
 	if len(policy.Tools) > 0 {
 		caps.Tools = &mcp.ToolCapabilities{}
@@ -158,7 +161,15 @@ func (g *Gateway) Server(name string, policy config.Server, d config.Definition)
 					return nil, rpcError(-32601, "tools disabled")
 				}
 			case "tools/call":
-				if !allowed(policy.Tools, req.GetParams().(*mcp.CallToolParamsRaw).Name) {
+				q := req.GetParams().(*mcp.CallToolParamsRaw)
+				if q == nil {
+					return nil, rpcError(-32602, "tool parameters required")
+				}
+				if policy.DescriptionLimit > 0 && q.Name == config.DescribeToolName {
+					if _, err := descriptionTarget(q.Arguments, policy); err != nil {
+						return nil, rpcError(-32602, "an allowed tool_name is required")
+					}
+				} else if !allowed(policy.Tools, q.Name) {
 					return nil, rpcError(-32602, "tool not allowed")
 				}
 			case "prompts/list":
@@ -166,7 +177,8 @@ func (g *Gateway) Server(name string, policy config.Server, d config.Definition)
 					return nil, rpcError(-32601, "prompts disabled")
 				}
 			case "prompts/get":
-				if !allowed(policy.Prompts, req.GetParams().(*mcp.GetPromptParams).Name) {
+				params := req.GetParams().(*mcp.GetPromptParams)
+				if params == nil || !allowed(policy.Prompts, params.Name) {
 					return nil, rpcError(-32602, "prompt not allowed")
 				}
 			case "resources/list":
@@ -174,7 +186,8 @@ func (g *Gateway) Server(name string, policy config.Server, d config.Definition)
 					return nil, rpcError(-32601, "resources disabled")
 				}
 			case "resources/read":
-				if !allowed(policy.Resources, req.GetParams().(*mcp.ReadResourceParams).URI) {
+				params := req.GetParams().(*mcp.ReadResourceParams)
+				if params == nil || !allowed(policy.Resources, params.URI) {
 					return nil, rpcError(-32602, "resource not allowed")
 				}
 			case "resources/templates/list":
@@ -236,13 +249,28 @@ func forward(ctx context.Context, b *mcp.ClientSession, method string, req mcp.R
 		items := []*mcp.Tool{}
 		for _, t := range r.Tools {
 			if allowed(p.Tools, t.Name) {
-				items = append(items, t)
+				if p.DescriptionLimit > 0 {
+					compact, err := compactTool(t, p.DescriptionLimit)
+					if err != nil {
+						return nil, err
+					}
+					items = append(items, compact)
+				} else {
+					items = append(items, t)
+				}
 			}
+		}
+		params := req.GetParams().(*mcp.ListToolsParams)
+		if p.DescriptionLimit > 0 && (params == nil || params.Cursor == "") {
+			items = append(items, descriptorTool())
 		}
 		r.Tools = items
 		return r, nil
 	case "tools/call":
 		q := req.GetParams().(*mcp.CallToolParamsRaw)
+		if p.DescriptionLimit > 0 && q.Name == config.DescribeToolName {
+			return describeTool(ctx, b, q.Arguments, p)
+		}
 		return b.CallTool(ctx, &mcp.CallToolParams{Meta: q.Meta, Name: q.Name, Arguments: q.Arguments})
 	case "prompts/list":
 		r, e := b.ListPrompts(ctx, req.GetParams().(*mcp.ListPromptsParams))
