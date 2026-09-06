@@ -1,6 +1,6 @@
 # MCP Host Bridge
 
-Go host-local MCP gateway. Read README.md, docs/design.md and docs/research.md.
+Go host-local MCP gateway. Read README.md, docs/architecture.md and docs/configuration.md.
 Never copy host credentials, registries, sessions or private inventory into this repository.
 All tests use isolated fixture subprocesses; never start production MCPs or send notifications.
 Keep Go source files below 400 lines. Use the official MCP SDK; do not implement JSON-RPC framing.
