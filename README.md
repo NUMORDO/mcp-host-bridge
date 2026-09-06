@@ -56,6 +56,7 @@ inherited OS execution boundary. Neither mode attaches to an existing CLI's pipe
 - [Deployment](docs/deployment.md)
 - [Compatibility](docs/compatibility.md)
 - [Compact metadata](docs/metadata.md)
+- [Roadmap and validation boundaries](docs/roadmap.md)
 - [Security](SECURITY.md)
 
 ## Development
