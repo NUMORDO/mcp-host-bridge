@@ -1,0 +1,39 @@
+name: verify
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.26.8'
+      - run: go test -race ./...
+      - run: go vet ./...
+      - run: go build -o bin/mcp-host-bridge ./cmd/mcp-host-bridge
+      - run: go build -o bin/mcp-bridge-demo ./cmd/mcp-bridge-demo
+      - run: python3 scripts/smoke.py --bin-dir bin --slow-body
+      - name: Isolated relay integration test
+        run: |
+          python3 -m venv "$RUNNER_TEMP/bridge-ci-venv"
+          "$RUNNER_TEMP/bridge-ci-venv/bin/python" -m pip install 'mcp==1.29.1'
+          "$RUNNER_TEMP/bridge-ci-venv/bin/python" scripts/shared_smoke.py --bin-dir bin
+  portable-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.26.8'
+      - run: ./scripts/build.sh
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: portable-binaries
+          path: dist/
+          retention-days: 7

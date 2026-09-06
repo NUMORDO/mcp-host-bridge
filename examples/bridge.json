@@ -1,0 +1,10 @@
+{
+  "host": "workstation",
+  "listen": "127.0.0.1:8787",
+  "allowed_hosts": ["127.0.0.1:8787", "localhost:8787"],
+  "auth": {"token_env": "MCP_BRIDGE_TOKEN"},
+  "limits": {"sessions": 16, "concurrent_calls": 4, "timeout_seconds": 60, "idle_seconds": 300},
+  "servers": {
+    "demo": {"command": "./bin/mcp-bridge-demo", "tools": ["counter"]}
+  }
+}

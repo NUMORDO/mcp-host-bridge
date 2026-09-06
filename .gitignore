@@ -1,0 +1,10 @@
+.serena/
+bin/
+dist/
+local/
+*.test
+coverage.out
+__pycache__/
+.env*
+*.pem
+*.key
