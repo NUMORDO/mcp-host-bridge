@@ -71,7 +71,7 @@ func dial(ctx context.Context, d config.Definition, limit int64) (*mcp.ClientSes
 	if d.KeepAliveMillis > 0 {
 		options.KeepAlive = time.Duration(d.KeepAliveMillis) * time.Millisecond
 	}
-	client := mcp.NewClient(&mcp.Implementation{Name: "mcp-host-bridge", Version: "0.2.0-dev"}, options)
+	client := mcp.NewClient(&mcp.Implementation{Name: "mcp-host-bridge", Version: "0.3.0-beta.1"}, options)
 	// Select the legacy handshake before contacting an upstream that also supports
 	// sessionless discovery. Rejecting only after negotiation stranded compatible
 	// real servers on the SDK default (2026) protocol. The SDK owns the fallback.

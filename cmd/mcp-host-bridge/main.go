@@ -31,7 +31,7 @@ func run(args []string) error {
 		return errors.New("usage: mcp-host-bridge serve|stdio|relay|check|inventory|version [options]")
 	}
 	if args[0] == "version" {
-		fmt.Println("mcp-host-bridge 0.2.0-dev")
+		fmt.Println("mcp-host-bridge 0.3.0-beta.1")
 		return nil
 	}
 	f := flag.NewFlagSet(args[0], flag.ContinueOnError)

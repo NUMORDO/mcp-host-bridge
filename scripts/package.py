@@ -9,7 +9,9 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 DEST = ROOT / "dist" / "releases"
 DOCS = ["LICENSE", "THIRD_PARTY_NOTICES.md", "README.md", "SECURITY.md",
-        "docs/deployment.md", "docs/compatibility.md"]
+        "docs/deployment.md", "docs/compatibility.md", "docs/configuration.md",
+        "docs/architecture.md", "docs/metadata.md", "docs/release-notes.md",
+        "examples/bridge.json"]
 
 
 def main():
@@ -23,7 +25,7 @@ def main():
                      for name in ("mcp-host-bridge", "mcp-bridge-demo")]
             files += [(ROOT / name, name) for name in DOCS]
             assert all(p.is_file() for p, _ in files), "run scripts/build.sh first"
-            archive = DEST / (f"mcp-host-bridge-v0.1.0-{target}" + (".zip" if system == "windows" else ".tar.gz"))
+            archive = DEST / (f"mcp-host-bridge-v0.3.0-beta.1-{target}" + (".zip" if system == "windows" else ".tar.gz"))
             if system == "windows":
                 with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as output:
                     for path, name in files:

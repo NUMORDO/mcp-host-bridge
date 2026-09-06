@@ -18,6 +18,8 @@ containment are not certified.
 - **Control exposure:** exact tool, prompt and resource allowlists apply to discovery
   and invocation.
 - **Keep credentials local:** upstream secrets are resolved on their owning host.
+- **Load less guidance:** optionally shorten tool descriptions and retrieve the
+  original guidance on demand, while preserving tool names and schemas.
 
 Transport conversion alone does not reduce backend count. Use shared scope only after
 checking the backend's state and permission contract. This is not an OS sandbox.
@@ -53,6 +55,7 @@ inherited OS execution boundary. Neither mode attaches to an existing CLI's pipe
 - [Ownership and lifecycle](docs/architecture.md)
 - [Deployment](docs/deployment.md)
 - [Compatibility](docs/compatibility.md)
+- [Compact metadata](docs/metadata.md)
 - [Security](SECURITY.md)
 
 ## Development
@@ -69,4 +72,3 @@ contact real registries, databases, exchanges or notification services. No Docke
 daemon is needed. Public examples contain no private deployment inventory.
 
 Built with the official MCP Go SDK. MIT licensed; see [third-party notices](THIRD_PARTY_NOTICES.md).
-

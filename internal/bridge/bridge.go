@@ -135,7 +135,7 @@ func (g *Gateway) Server(name string, policy config.Server, d config.Definition)
 	if len(policy.Resources) > 0 {
 		caps.Resources = &mcp.ResourceCapabilities{}
 	}
-	server := mcp.NewServer(&mcp.Implementation{Name: name, Version: "0.2.0-dev"}, &mcp.ServerOptions{Capabilities: caps, Instructions: instructions})
+	server := mcp.NewServer(&mcp.Implementation{Name: name, Version: "0.3.0-beta.1"}, &mcp.ServerOptions{Capabilities: caps, Instructions: instructions})
 	server.AddReceivingMiddleware(func(next mcp.MethodHandler) mcp.MethodHandler {
 		return func(ctx context.Context, method string, req mcp.Request) (mcp.Result, error) {
 			// Stateful legacy sessions are intentional. Modern sessionless clients must negotiate down.
