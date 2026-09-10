@@ -17,6 +17,12 @@ key, client registration and token issuance remain operator responsibilities.
 Validate each intended web product separately. LAN reachability, an HTTP response
 or an SDK test does not prove account-level compatibility.
 
+Policy is read once at startup. Adding or changing a server entry takes effect only
+after the gateway restarts, and stdio relay sessions that span the restart do not
+reconnect on their own: their client must reopen the server. Schedule policy changes
+with that cost in mind. Backends served over HTTP by other processes or containers are
+not part of the gateway's process accounting; record them separately.
+
 Preserve the current binary and policy before upgrades. Do not restart a gateway
 with active clients without a maintenance window. Atomic executable replacement
 affects future processes; existing processes retain their loaded code. Record

@@ -4,7 +4,9 @@ Connect AI clients to your existing MCP servers without copying credentials betw
 machines. Run a small Go gateway on each host, expose explicit capabilities over
 Streamable HTTP, or keep using local stdio.
 
-**Beta software.** Local Linux and macOS workflows are tested. Windows users should
+**Beta software.** Local Linux and macOS workflows are tested, including an
+18-of-382 tool allowlist for a credentialed backend across three hosts (see
+[release notes](docs/release-notes.md)). Windows users should
 use WSL for stdio backends. Web-account integrations and native Windows subprocess
 containment are not certified.
 

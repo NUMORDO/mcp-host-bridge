@@ -25,7 +25,7 @@ def main():
                      for name in ("mcp-host-bridge", "mcp-bridge-demo")]
             files += [(ROOT / name, name) for name in DOCS]
             assert all(p.is_file() for p, _ in files), "run scripts/build.sh first"
-            archive = DEST / (f"mcp-host-bridge-v0.3.0-beta.1-{target}" + (".zip" if system == "windows" else ".tar.gz"))
+            archive = DEST / (f"mcp-host-bridge-v0.3.0-beta.2-{target}" + (".zip" if system == "windows" else ".tar.gz"))
             if system == "windows":
                 with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as output:
                     for path, name in files:
